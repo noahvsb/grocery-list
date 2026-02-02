@@ -1,9 +1,9 @@
 <script setup lang="ts">
-// imports
+// TODO: get list data
 </script>
 
 <template>
-  <router-view/>
+    <!-- TODO: show list data nicely -->
 </template>
 
 <style scoped>
