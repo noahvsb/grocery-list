@@ -1,12 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { HomePage, NotFoundPage } from './pages/pages.ts';
+import HomePage from './pages/HomePage.vue';
 
 const router = createRouter({
     history: createWebHistory('/grocery-list/'),
     routes: [
         { path: '/', component: HomePage },
-        { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundPage }
     ]
 });
 
