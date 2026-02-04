@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createList } from "@/functions/list.ts";
+import { createList } from "@/util/functions";
 </script>
 
 <template>
