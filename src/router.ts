@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import HomeView from "@/views/HomeView.vue";
-import ListView from "@/views/ListView.vue";
 
 const router = createRouter({
   history: createWebHistory("/grocery-list/"),
@@ -10,12 +9,9 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
-    },
-    {
-      path: "/:code",
-      name: "list",
-      component: ListView,
-      props: true,
+      props: route => ({
+        code: typeof route.query.code === "string" ? route.query.code : undefined
+      }),
     },
   ],
 });

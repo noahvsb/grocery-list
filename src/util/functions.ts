@@ -13,7 +13,7 @@ export async function createList(name: string): Promise<void> {
     if (error)
         showError("create list: " + error.message);
     else
-        router.push(`/${code}`);
+        router.push({ path: "/", query: { code } });
 }
 
 export async function deleteList(code: string): Promise<void> {
@@ -22,7 +22,7 @@ export async function deleteList(code: string): Promise<void> {
     if (error)
         showError("delete list: " + error.message);
     else
-        router.push(`/`);
+        router.push("/");
 }
 
 function parseList(data: any): GroceryList {
