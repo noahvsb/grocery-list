@@ -1,4 +1,9 @@
 export interface ListItem {
   name: string;
-  amount: number;
+  extra?: string;
 }
+
+export interface ListData {
+  name: string;
+  list: ListItem[];
+};

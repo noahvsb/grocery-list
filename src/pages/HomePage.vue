@@ -3,8 +3,8 @@ import { createList } from "@/util/functions";
 </script>
 
 <template>
-    <h1>grocery list</h1>
-    <button @click=createList>create list</button>
+    <h1>Grocery List</h1>
+    <button @click=createList>Create List</button>
 </template>
 
 <style scoped>
