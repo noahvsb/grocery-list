@@ -2,6 +2,10 @@
 
 A way to create and share grocery lists easily.
 
+https://noahvsb.github.io/grocery-list/
+
+I am using the free plan of supabase, so don't go too crazy, there are some limits.
+
 ## Backstory
 
 This started as a bit of a protest.
