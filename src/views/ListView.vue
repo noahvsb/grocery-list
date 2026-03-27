@@ -89,7 +89,7 @@ function toggleRemoveItemMode() {
             <div style="margin-bottom: 1rem;">
                 <button @click="toggleAddItemMode">{{ addItemMode ? "Cancel" : "Add Item" }}</button>
                 <button @click="toggleRemoveItemMode">{{ removeItemMode ? "Cancel" : "Remove Item" }}</button>
-                <button @click="toggleDeletePopup" style="color:red;">Delete List</button>
+                <!-- <button @click="toggleDeletePopup" style="color:red;">Delete List</button> -->
             </div>
 
             <!-- Add mode -->
