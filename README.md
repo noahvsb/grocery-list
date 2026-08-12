@@ -33,6 +33,5 @@ npm run build
 
 ## TODO
 
-strikethrough ListItem
 remove all strikethroughed ListItems
 a bit of css

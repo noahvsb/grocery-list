@@ -107,6 +107,14 @@ function toggleEditItemMode() {
             : [];
     }
 }
+
+// toggle handlers 😭
+
+function handleToggleStrikethrough(itemId: number) {
+    if (!data.value) return;
+    const target = data.value.list.find((i) => i.id === itemId);
+    if (target) target.strikethrough = !target.strikethrough;
+}
 </script>
 
 <template>
@@ -121,7 +129,7 @@ function toggleEditItemMode() {
             <div style="margin-bottom: 1rem;">
                 <button @click="toggleAddItemMode">{{ addItemMode ? "Cancel" : "Add Item" }}</button>
                 <button @click="toggleRemoveItemMode">{{ removeItemMode ? "Cancel" : "Remove Items" }}</button>
-                <button @click="toggleEditItemMode">{{ editItemMode ? "Cancel" : "Edit Items" }}</button>
+                <button @click="toggleEditItemMode">{{ editItemMode ? "Cancel" : "Edit Item" }}</button>
                 <!-- <button @click="toggleDeletePopup" style="color:red;">Delete List</button> -->
             </div>
 
@@ -156,7 +164,7 @@ function toggleEditItemMode() {
                         <button @click="handleEditItem(index)">Save</button>
                     </template>
                     <template v-else>
-                        <ListItem :item="item" />
+                        <ListItem :item="item" @toggle-strikethrough="handleToggleStrikethrough" />
                         <!-- X button only in remove mode -->
                         <button v-if="removeItemMode" @click="handleRemoveItem(item.id)" style="margin-left: 0.5rem; color: red;">X</button>
                     </template>
