@@ -8,7 +8,7 @@ const props = defineProps<{
 
 <template>
     {{ item.name }}
-    <span v-if="props.item.amount">
+    <span v-if="props.item.amount > 1">
         (x{{ item.amount }})
     </span>
 </template>
