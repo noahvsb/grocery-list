@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 import type { GroceryList } from "@/util/types";
-import { deleteList, getList, addItem, removeItem, editItem } from "@/util/functions";
+import { getList, addItem, removeItem, editItem } from "@/util/functions";
 
 import ListItem from "@/components/ListItem.vue";
 import AreYouSure from "@/components/AreYouSure.vue";
@@ -23,10 +23,14 @@ const addItemAmount = ref<number | null>(null);
 const editBuffer = ref<{ name: string; amount: number }[]>([]);
 
 // toggles
-const showDeletePopup = ref(false);
+const showRemoveStruckPopup = ref(false);
 const addItemMode = ref(false);
 const removeItemMode = ref(false);
 const editItemMode = ref(false);
+
+const struckItemCount = computed(
+    () => data.value?.list.filter((i) => i.strikethrough).length ?? 0
+);
 
 // fetch data on mount
 onMounted(async () => {
@@ -39,13 +43,6 @@ onMounted(async () => {
 });
 
 // handlers
-async function handleDelete() {
-  if (!data.value) return;
-
-  await deleteList(data.value.code);
-  data.value = null; // remove local state
-  showDeletePopup.value = false;
-}
 
 function handleAddItem() {
     if (!addItemName.value || !data.value) return;
@@ -63,6 +60,19 @@ function handleRemoveItem(itemId: number) {
     removeItem(data.value, itemId);
 }
 
+async function handleRemoveStruckItems() {
+    if (!data.value) return;
+
+    const struckIds = data.value.list
+        .filter((i) => i.strikethrough)
+        .map((i) => i.id);
+
+    await Promise.all(struckIds.map((id) => removeItem(data.value!, id)));
+
+    data.value.list = data.value.list.filter((i) => !i.strikethrough);
+    showRemoveStruckPopup.value = false;
+}
+
 async function handleEditItem(itemIndex: number) {
     if (!data.value) return;
 
@@ -75,8 +85,9 @@ async function handleEditItem(itemIndex: number) {
 }
 
 // togglers
-function toggleDeletePopup() {
-    showDeletePopup.value = !showDeletePopup.value;
+
+function toggleRemoveStruckPopup() {
+    showRemoveStruckPopup.value = !showRemoveStruckPopup.value;
 }
 
 function toggleAddItemMode() {
@@ -128,8 +139,15 @@ function handleToggleStrikethrough(itemId: number) {
             <!-- List Controls -->
             <div style="margin-bottom: 1rem;">
                 <button @click="toggleAddItemMode">{{ addItemMode ? "Cancel" : "Add Item" }}</button>
-                <button @click="toggleRemoveItemMode">{{ removeItemMode ? "Cancel" : "Remove Items" }}</button>
-                <button @click="toggleEditItemMode">{{ editItemMode ? "Cancel" : "Edit Item" }}</button>
+                <button @click="toggleRemoveItemMode">{{ removeItemMode ? "Cancel" : "Remove Item" }}</button>
+                <button @click="toggleEditItemMode">{{ editItemMode ? "Cancel" : "Edit Items" }}</button>
+                <button
+                    v-if="struckItemCount > 0"
+                    @click="toggleRemoveStruckPopup"
+                    style="color:red;"
+                >
+                    Remove {{ struckItemCount }} Struck-through Items
+                </button>
                 <!-- <button @click="toggleDeletePopup" style="color:red;">Delete List</button> -->
             </div>
 
@@ -137,6 +155,7 @@ function handleToggleStrikethrough(itemId: number) {
             <div v-if="addItemMode" style="margin-top: 0.5rem;">
                 <input v-model="addItemName" placeholder="Item name" @keyup.enter="handleAddItem" />
                 <input
+                    ref="amountInput"
                     v-model="addItemAmount"
                     placeholder="Amount (optional)"
                     type="number"
@@ -171,12 +190,12 @@ function handleToggleStrikethrough(itemId: number) {
                 </li>
             </ul>
 
-            <!-- Delete Popup -->
+            <!-- Remove Struck-through Items Popup -->
             <AreYouSure
-                :visible="showDeletePopup"
-                message="Are you sure you want to delete this list?"
-                @confirm="handleDelete"
-                @cancel="toggleDeletePopup"
+                :visible="showRemoveStruckPopup"
+                :message="`Are you sure you want to remove ${struckItemCount} struck-through item${struckItemCount === 1 ? '' : 's'}?`"
+                @confirm="handleRemoveStruckItems"
+                @cancel="toggleRemoveStruckPopup"
             />
         </span>
     </span>
