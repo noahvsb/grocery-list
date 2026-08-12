@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 
 import type { GroceryList } from "@/util/types";
-import { deleteList, getList, addItem, removeItem } from "@/util/functions";
+import { deleteList, getList, addItem, removeItem, editItem } from "@/util/functions";
 
 import ListItem from "@/components/ListItem.vue";
 import AreYouSure from "@/components/AreYouSure.vue";
@@ -19,10 +19,14 @@ const loading = ref(true);
 const addItemName = ref("");
 const addItemAmount = ref<number | null>(null);
 
+// edit mode buffers (one per list item, mirrors data.list order)
+const editBuffer = ref<{ name: string; amount: number }[]>([]);
+
 // toggles
 const showDeletePopup = ref(false);
 const addItemMode = ref(false);
 const removeItemMode = ref(false);
+const editItemMode = ref(false);
 
 // fetch data on mount
 onMounted(async () => {
@@ -57,8 +61,17 @@ function handleRemoveItem(itemId: number) {
     if (!data.value) return;
 
     removeItem(data.value, itemId);
+}
 
-    toggleRemoveItemMode();
+async function handleEditItem(itemIndex: number) {
+    if (!data.value) return;
+
+    const buffered = editBuffer.value[itemIndex];
+    if (!buffered || !buffered.name) return;
+
+    await editItem(data.value, itemIndex, buffered.name, buffered.amount);
+
+    toggleEditItemMode();
 }
 
 // togglers
@@ -68,12 +81,31 @@ function toggleDeletePopup() {
 
 function toggleAddItemMode() {
     addItemMode.value = !addItemMode.value;
-    if (addItemMode.value) removeItemMode.value = false; // max 1 mode at a time
+    if (addItemMode.value) {
+        removeItemMode.value = false;
+        editItemMode.value = false;
+    }
 }
 
 function toggleRemoveItemMode() {
     removeItemMode.value = !removeItemMode.value;
-    if (removeItemMode.value) addItemMode.value = false; // max 1 mode at a time
+    if (removeItemMode.value) {
+        addItemMode.value = false;
+        editItemMode.value = false;
+    }
+}
+
+function toggleEditItemMode() {
+    editItemMode.value = !editItemMode.value;
+    if (editItemMode.value) {
+        addItemMode.value = false;
+        removeItemMode.value = false;
+
+        // seed the edit buffer from current data
+        editBuffer.value = data.value
+            ? data.value.list.map((item) => ({ name: item.name, amount: item.amount }))
+            : [];
+    }
 }
 </script>
 
@@ -88,7 +120,8 @@ function toggleRemoveItemMode() {
             <!-- List Controls -->
             <div style="margin-bottom: 1rem;">
                 <button @click="toggleAddItemMode">{{ addItemMode ? "Cancel" : "Add Item" }}</button>
-                <button @click="toggleRemoveItemMode">{{ removeItemMode ? "Cancel" : "Remove Item" }}</button>
+                <button @click="toggleRemoveItemMode">{{ removeItemMode ? "Cancel" : "Remove Items" }}</button>
+                <button @click="toggleEditItemMode">{{ editItemMode ? "Cancel" : "Edit Items" }}</button>
                 <!-- <button @click="toggleDeletePopup" style="color:red;">Delete List</button> -->
             </div>
 
@@ -96,7 +129,6 @@ function toggleRemoveItemMode() {
             <div v-if="addItemMode" style="margin-top: 0.5rem;">
                 <input v-model="addItemName" placeholder="Item name" @keyup.enter="handleAddItem" />
                 <input
-                    ref="amountInput"
                     v-model="addItemAmount"
                     placeholder="Amount (optional)"
                     type="number"
@@ -108,11 +140,26 @@ function toggleRemoveItemMode() {
 
             <!-- List Items -->
             <ul>
-                <li v-for="item in data.list" :key="item.id" >
-                    <ListItem :item="item" />
-
-                    <!-- X button only in remove mode -->
-                    <button v-if="removeItemMode" @click="handleRemoveItem(item.id)" style="margin-left: 0.5rem; color: red;">X</button>
+                <li v-for="(item, index) in data.list" :key="item.id">
+                    <template v-if="editItemMode && editBuffer[index]">
+                        <input
+                            v-model="editBuffer[index].name"
+                            placeholder="Item name"
+                            @keyup.enter="handleEditItem(index)"
+                        />
+                        <input
+                            v-model="editBuffer[index].amount"
+                            type="number"
+                            min="1"
+                            @keyup.enter="handleEditItem(index)"
+                        />
+                        <button @click="handleEditItem(index)">Save</button>
+                    </template>
+                    <template v-else>
+                        <ListItem :item="item" />
+                        <!-- X button only in remove mode -->
+                        <button v-if="removeItemMode" @click="handleRemoveItem(item.id)" style="margin-left: 0.5rem; color: red;">X</button>
+                    </template>
                 </li>
             </ul>
 

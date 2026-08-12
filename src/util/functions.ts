@@ -64,6 +64,26 @@ export async function addItem(grocery: GroceryList, itemName: string, itemAmount
         grocery.list.push({ id, name: itemName, amount: itemAmount ?? 1});
 }
 
+export async function editItem(grocery: GroceryList, itemIndex: number, itemName: string, itemAmount: number): Promise<void> {
+    const itemId = grocery.list[itemIndex]!.id;
+
+    const { data: id, error } = await supabase.rpc('edit_list_item', {
+        item_id: itemId,
+        grocery_code: grocery.code,
+        item_name: itemName,
+        item_amount: itemAmount
+    });
+
+    if (error)
+        showError("edit item: " + error.message)
+    else if (id === null)
+        showError("edit item: id doesn't exist")
+    else {
+        grocery.list[itemIndex]!.name = itemName;
+        grocery.list[itemIndex]!.amount = itemAmount;
+    }
+}
+
 export async function removeItem(grocery: GroceryList, itemId: number): Promise<void> {
     const { error } = await supabase.rpc('remove_list_item', { item_id: itemId });
 
