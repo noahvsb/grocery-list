@@ -30,3 +30,10 @@ npm run dev
 ```sh
 npm run build
 ```
+
+## TODO
+
+edit ListItem
+strikethrough ListItem
+remove all strikethroughed ListItems
+a bit of css

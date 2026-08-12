@@ -28,17 +28,17 @@ export async function deleteList(code: string): Promise<void> {
 function parseList(data: any): GroceryList {
     const row = Array.isArray(data) ? data[0] : data;
 
-    const items = Array.isArray(row.list) ? row.list : [];
+    const items: ListItem[] = Array.isArray(row.list) ? row.list : [];
 
     return {
         code: row.code,
         name: row.name,
         list: items
             .filter((item: any) => item && item.id != null)
-            .map((item: any) => ({
+            .map((item: any) => (<ListItem>{
                 id: item.id,
                 name: item.name,
-                extra: item.extra ?? undefined,
+                amount: item.amount,
             })),
     };
 }
@@ -55,13 +55,13 @@ export async function getList(code: string): Promise<GroceryList | null> {
     }
 }
 
-export async function addItem(grocery: GroceryList, itemName: string, itemExtra?: string): Promise<void> {
-    const { data: id, error } = await supabase.rpc('add_list_item', { grocery_code: grocery.code, item_name: itemName, item_extra: itemExtra });
+export async function addItem(grocery: GroceryList, itemName: string, itemAmount?: number): Promise<void> {
+    const { data: id, error } = await supabase.rpc('add_list_item', { grocery_code: grocery.code, item_name: itemName, item_amount: itemAmount });
 
     if (error)
         showError("add item: " + error.message)
     else
-        grocery.list.push({ id, name: itemName, extra: itemExtra});
+        grocery.list.push({ id, name: itemName, amount: itemAmount});
 }
 
 export async function removeItem(grocery: GroceryList, itemId: number): Promise<void> {

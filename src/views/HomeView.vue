@@ -21,10 +21,10 @@ function handleCreateList() {
     <span v-if="!props.code">
         <h1>Grocery List</h1>
         <input v-model="listName" placeholder="List name" />
-        <button @click=handleCreateList>Create List</button>
+        <button :disabled="listName === ''" @click=handleCreateList>Create List</button>
     </span>
     <ListView v-else :code="props.code" />
 </template>
-
+ 
 <style scoped>
 </style>

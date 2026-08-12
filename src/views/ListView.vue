@@ -17,7 +17,7 @@ const loading = ref(true);
 
 // inputs
 const addItemName = ref("");
-const addItemExtra = ref("");
+const addItemAmount = ref(0);
 
 // toggles
 const showDeletePopup = ref(false);
@@ -46,10 +46,10 @@ async function handleDelete() {
 function handleAddItem() {
     if (!addItemName.value || !data.value) return;
 
-    addItem(data.value, addItemName.value, addItemExtra.value);
+    addItem(data.value, addItemName.value, addItemAmount.value);
 
     addItemName.value = "";
-    addItemExtra.value = "";
+    addItemAmount.value = 0;
     toggleAddItemMode();
 }
 
@@ -95,7 +95,7 @@ function toggleRemoveItemMode() {
             <!-- Add mode -->
             <div v-if="addItemMode" style="margin-top: 0.5rem;">
                 <input v-model="addItemName" placeholder="Item name" />
-                <input v-model="addItemExtra" placeholder="Extra info (optional)" />
+                <input v-model="addItemAmount" placeholder="Amount (optional)" type="number" />
                 <button @click="handleAddItem">Add</button>
             </div>
 

@@ -1,7 +1,7 @@
 export interface ListItem {
   id: number,
   name: string;
-  extra?: string;
+  amount?: number;
 }
 
 export interface GroceryList {
