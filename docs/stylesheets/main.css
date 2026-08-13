@@ -1,0 +1,291 @@
+/* ==========================================================================
+   Grocery List — shared stylesheet
+   Theme: paper receipt. One card, torn edge, monospace body, stamp-red accents.
+   Component-specific layout lives in each .vue file's <style scoped>; this
+   file only holds tokens and classes meant to be reused across components.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* palette */
+  --surface: #e7e2d4;       /* the "counter" behind the paper */
+  --paper: #faf7ef;         /* card background */
+  --paper-alt: #f1ecdf;     /* inputs, pills, muted fills */
+  --ink: #2b2a25;           /* primary text */
+  --ink-soft: #79745f;      /* secondary text */
+  --line: #d9d3c0;          /* hairlines / dashed dividers */
+  --stamp: #c1440e;         /* accent: destructive + brand stamp */
+  --stamp-soft: #f4ded2;
+  --fresh: #4b7a51;         /* accent: confirm / success */
+  --fresh-soft: #e1ebdf;
+
+  /* shape */
+  --radius-sm: 3px;
+  --radius: 7px;
+  --shadow-card: 0 1px 2px rgba(30, 28, 20, 0.06), 0 14px 30px -18px rgba(30, 28, 20, 0.4);
+
+  /* type */
+  --font-display: 'Space Grotesk', 'Arial Narrow', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--surface);
+  background-image: radial-gradient(circle at 1px 1px, rgba(43, 42, 37, 0.06) 1px, transparent 0);
+  background-size: 20px 20px;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  width: 100%;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------- */
+/* Card: the paper surface every view sits on                          */
+/* -------------------------------------------------------------------- */
+
+.card {
+  width: 100%;
+  max-width: 26rem;
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 1.85rem 1.75rem 2rem;
+  position: relative;
+}
+
+/* torn paper edge — apply alongside .card for a receipt-strip bottom */
+.torn-edge {
+  padding-bottom: 2.35rem;
+}
+
+.torn-edge::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 11px;
+  background:
+    linear-gradient(135deg, var(--surface) 50%, transparent 50%) 0 0 / 11px 11px repeat-x,
+    linear-gradient(-135deg, var(--surface) 50%, transparent 50%) 5.5px 0 / 11px 11px repeat-x;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--stamp);
+  margin: 0 0 0.35rem;
+}
+
+/* -------------------------------------------------------------------- */
+/* Inputs                                                                */
+/* -------------------------------------------------------------------- */
+
+.input {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  color: var(--ink);
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.7rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.input:focus {
+  border-color: var(--stamp);
+  background: var(--paper);
+}
+
+.input::placeholder {
+  color: var(--ink-soft);
+}
+
+.input:disabled {
+  opacity: 0.5;
+}
+
+/* -------------------------------------------------------------------- */
+/* Text buttons — reserved for primary, non-add/delete/edit actions     */
+/* -------------------------------------------------------------------- */
+
+.btn {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn .icon {
+  width: 0.95em;
+  height: 0.95em;
+}
+
+.btn-primary {
+  border-color: var(--stamp);
+  color: var(--stamp);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--stamp);
+  color: var(--paper);
+}
+
+/* -------------------------------------------------------------------- */
+/* Icon buttons — the add / delete / edit / confirm / cancel controls   */
+/* -------------------------------------------------------------------- */
+
+.icon-btn {
+  --size: 2.15rem;
+  width: var(--size);
+  height: var(--size);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  background: var(--paper-alt);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn .icon {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.icon-btn:hover:not(:disabled) {
+  border-color: var(--ink);
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.icon-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* neutral "active/toggled" state, e.g. a mode toggle currently on */
+.icon-btn--active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+/* destructive intent: remove / delete */
+.icon-btn--danger:hover:not(:disabled) {
+  border-color: var(--stamp);
+  color: var(--stamp);
+  background: var(--stamp-soft);
+}
+
+.icon-btn--danger.icon-btn--active {
+  background: var(--stamp);
+  border-color: var(--stamp);
+  color: var(--paper);
+}
+
+/* affirmative intent: add / save / confirm */
+.icon-btn--confirm:hover:not(:disabled) {
+  border-color: var(--fresh);
+  color: var(--fresh);
+  background: var(--fresh-soft);
+}
+
+.icon-btn__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 1.05rem;
+  height: 1.05rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--stamp);
+  color: var(--paper);
+  font-size: 0.6rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* -------------------------------------------------------------------- */
+/* Overlay (used by confirmation popups)                                */
+/* -------------------------------------------------------------------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 28, 20, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 1rem;
+}

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Icon from "@/components/Icon.vue";
+
 const props = defineProps<{
   visible: boolean;
   message: string;
@@ -20,38 +22,35 @@ function cancel() {
 
 <template>
   <div v-if="visible" class="overlay">
-    <div class="popup">
-      <p>{{ message }}</p>
-      <div class="buttons">
-        <button @click="confirm">Yes</button>
-        <button @click="cancel">No</button>
+    <div class="popup card">
+      <p class="popup-message">{{ message }}</p>
+      <div class="popup-buttons">
+        <button class="icon-btn icon-btn--danger" title="Yes, remove" @click="confirm">
+          <Icon name="check" />
+        </button>
+        <button class="icon-btn" title="No, cancel" @click="cancel">
+          <Icon name="x" />
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
 .popup {
-  background: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
+  max-width: 20rem;
   text-align: center;
 }
 
-.buttons button {
-  margin: 0 0.5rem;
+.popup-message {
+  margin: 0 0 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
 }
 </style>

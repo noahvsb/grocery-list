@@ -25,13 +25,8 @@ npm install
 npm run dev
 ```
 
-### build before committing
+### Build before committing
 
 ```sh
 npm run build
 ```
-
-## TODO
-
-remove all strikethroughed ListItems
-a bit of css
